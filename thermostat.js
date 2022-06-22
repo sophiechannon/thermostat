@@ -1,6 +1,17 @@
 class Thermostat {
+  constructor() {
+    this.temperature = 20;
+  }
   getTemperature() {
-    return 20;
+    return this.temperature;
+  }
+
+  up() {
+    this.temperature++
+  }
+
+  down() {
+    this.temperature--
   }
 }
 module.exports = Thermostat;
