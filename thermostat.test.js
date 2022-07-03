@@ -1,19 +1,19 @@
-const Thermostat = require('./thermostat');
+const Thermostat = require("./thermostat");
 
-describe('getTemperature', () => {
-  it('returns 20 by default', () => {
+describe("getTemperature", () => {
+  it("returns 20 by default", () => {
     thermostat = new Thermostat();
     expect(thermostat.getTemperature()).toBe(20);
   });
 
-  it('returns 22 when temperature is increased twice', () => {
+  it("returns 22 when temperature is increased twice", () => {
     thermostat = new Thermostat();
     thermostat.up();
     thermostat.up();
     expect(thermostat.getTemperature()).toBe(22);
   });
 
-  it('returns 21 when temperature is increased twice & down once', () => {
+  it("returns 21 when temperature is increased twice & down once", () => {
     thermostat = new Thermostat();
     thermostat.up();
     thermostat.up();
@@ -21,83 +21,102 @@ describe('getTemperature', () => {
     expect(thermostat.getTemperature()).toBe(21);
   });
 
-  it('is capped at a minimum of 10', () => {
+  it("is capped at a minimum of 10", () => {
     thermostat = new Thermostat();
-    for (let i = 0 ; i < 12 ; i++) {
+    for (let i = 0; i < 12; i++) {
       thermostat.down();
-    }    
+    }
     expect(thermostat.getTemperature()).toBe(10);
   });
 
-  it('is capped at a minimum of 25 when PSM is on by default', () => {
+  it("is capped at a minimum of 25 when PSM is on by default", () => {
     thermostat = new Thermostat();
-    for (let i = 0 ; i < 10 ; i++) {
+    for (let i = 0; i < 10; i++) {
       thermostat.up();
-    };
+    }
     expect(thermostat.getTemperature()).toBe(25);
   });
 
-  it('can exceed 25 when PSM is turned off', () => {
+  it("can exceed 25 when PSM is turned off", () => {
     thermostat = new Thermostat();
-    thermostat.setPowerSavingMode("off"); 
-    for (let i = 0 ; i < 10 ; i++) {
+    thermostat.setPowerSavingMode("off");
+    for (let i = 0; i < 10; i++) {
       thermostat.up();
-    };
+    }
     expect(thermostat.getTemperature()).toBe(30);
   });
 
-  it('is capped at a minimum of 32 when PSM is turned on', () => {
+  it("is capped at a minimum of 32 when PSM is turned on", () => {
     thermostat = new Thermostat();
-    thermostat.setPowerSavingMode("off"); 
-    for (let i = 0 ; i < 25 ; i++) {
+    thermostat.setPowerSavingMode("off");
+    for (let i = 0; i < 25; i++) {
       thermostat.up();
-    }; 
+    }
     expect(thermostat.getTemperature()).toBe(32);
   });
 
-  it('resets from a higher temp to 25 when PSM is turned on', () => {
+  it("resets from a higher temp to 25 when PSM is turned on", () => {
     thermostat = new Thermostat();
-    thermostat.setPowerSavingMode("off"); 
-    for (let i = 0 ; i < 25 ; i++) {
+    thermostat.setPowerSavingMode("off");
+    for (let i = 0; i < 25; i++) {
       thermostat.up();
-    }; 
-    thermostat.setPowerSavingMode('on');
+    }
+    thermostat.setPowerSavingMode("on");
     expect(thermostat.getTemperature()).toBe(25);
   });
 
-  it('resets to 20 when reset is pressed', () => {
+  it("resets to 20 when reset is pressed", () => {
     thermostat = new Thermostat();
-    for (let i = 0 ; i < 25 ; i++) {
+    for (let i = 0; i < 25; i++) {
       thermostat.up();
-    }; 
+    }
     thermostat.reset();
     expect(thermostat.getTemperature()).toBe(20);
   });
 });
 
-describe('getEnergyUsage', () => {
-  it('returns low usage if temperature is less than 18', () => {
+describe("getEnergyUsage", () => {
+  it("returns low usage if temperature is less than 18", () => {
     thermostat = new Thermostat();
-    for (let i = 0 ; i < 3; i++) {
+    for (let i = 0; i < 3; i++) {
       thermostat.down();
-    }; 
+    }
     expect(thermostat.getTemperature()).toBe(17);
-    expect(thermostat.getEnergyUsage()).toEqual('Low');
+    expect(thermostat.getEnergyUsage()).toEqual("Low");
   });
 
-  it('returns medium usage if temperature is between 19 - 25', () => {
+  it("returns medium usage if temperature is between 19 - 25", () => {
     thermostat = new Thermostat();
     expect(thermostat.getTemperature()).toBe(20);
-    expect(thermostat.getEnergyUsage()).toEqual('Medium');
+    expect(thermostat.getEnergyUsage()).toEqual("Medium");
   });
 
-  it('returns high usage if temperature is between > 25', () => {
+  it("returns high usage if temperature is between > 25", () => {
     thermostat = new Thermostat();
     thermostat.setPowerSavingMode("off");
-    for (let i = 0 ; i < 7; i++) {
+    for (let i = 0; i < 7; i++) {
       thermostat.up();
-    }; 
+    }
     expect(thermostat.getTemperature()).toBe(27);
-    expect(thermostat.getEnergyUsage()).toEqual('High');
+    expect(thermostat.getEnergyUsage()).toEqual("High");
+  });
+});
+
+describe("setPowerSavingMode", () => {
+  it("throws an error if no status is given", () => {
+    thermostat = new Thermostat();
+    expect(() => {
+      thermostat.setPowerSavingMode();
+    }).toThrow("You must set a status");
+  });
+
+  it("throws an error if status is invalid", () => {
+    thermostat = new Thermostat();
+    expect(() => {
+      thermostat.setPowerSavingMode("TURN ON");
+    }).toThrow("You must select on or off");
+    expect(() => {
+      thermostat.setPowerSavingMode(1);
+    }).toThrow("You must select on or off");
   });
 });
